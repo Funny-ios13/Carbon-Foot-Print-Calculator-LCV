@@ -4,126 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Huella de Carbono</title>
+    <link rel="icon" href="logo-del-colegio.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/x-icon" href="/logo-del-colegio.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
-        /* Custom Styles */
+        /* Custom Styles (same as before) */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f9ff; /* Light blue background */
+            background-color: #f0f9ff;
         }
         .calculator-container {
-            background-color: white;
-            border-radius: 1rem; /* More rounded corners */
+            background-color: white; border-radius: 1rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-            max-width: 700px; /* Limit max width */
-            margin-left: auto;
-            margin-right: auto;
+            padding: 2rem; margin-top: 2rem; margin-bottom: 2rem;
+            max-width: 700px; margin-left: auto; margin-right: auto;
         }
         .question-card {
-            border: 1px solid #e5e7eb; /* Light gray border */
-            border-radius: 0.75rem; /* Rounded corners */
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            background-color: #f9fafb; /* Very light gray background */
+            border: 1px solid #e5e7eb; border-radius: 0.75rem;
+            padding: 1.5rem; margin-bottom: 1.5rem; background-color: #f9fafb;
         }
         .option-label {
-            display: block;
-            padding: 0.75rem 1.25rem;
-            margin-bottom: 0.5rem;
-            border: 1px solid #d1d5db; /* Gray border */
-            border-radius: 0.5rem; /* Rounded corners */
-            cursor: pointer;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-            background-color: white;
+            display: block; padding: 0.75rem 1.25rem; margin-bottom: 0.5rem;
+            border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease; background-color: white;
         }
-        .option-label:hover {
-            background-color: #f3f4f6; /* Lighter gray on hover */
-        }
+        .option-label:hover { background-color: #f3f4f6; }
         input[type="radio"]:checked + .option-label {
-            background-color: #bfdbfe; /* Light blue when selected */
-            border-color: #3b82f6; /* Blue border when selected */
-            font-weight: 500;
+            background-color: #bfdbfe; border-color: #3b82f6; font-weight: 500;
         }
-        input[type="radio"] {
-            display: none; /* Hide the actual radio button */
-        }
+        input[type="radio"] { display: none; }
         .nav-button {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: background-color 0.2s ease;
-            cursor: pointer;
+            padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 500;
+            transition: background-color 0.2s ease; cursor: pointer;
         }
-        .nav-button-primary {
-            background-color: #3b82f6; /* Blue */
-            color: white;
-        }
-        .nav-button-primary:hover {
-            background-color: #2563eb; /* Darker blue */
-        }
-         .nav-button-primary:disabled {
-            background-color: #9ca3af; /* Gray when disabled */
-            cursor: not-allowed;
-        }
-        .nav-button-secondary {
-            background-color: #e5e7eb; /* Light gray */
-            color: #374151; /* Dark gray text */
-        }
-        .nav-button-secondary:hover {
-            background-color: #d1d5db; /* Gray */
-        }
+        .nav-button-primary { background-color: #3b82f6; color: white; }
+        .nav-button-primary:hover { background-color: #2563eb; }
+        .nav-button-primary:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        .nav-button-secondary { background-color: #e5e7eb; color: #374151; }
+        .nav-button-secondary:hover { background-color: #d1d5db; }
         .result-section {
-            background-color: #ecfdf5; /* Light green background */
-            border: 1px solid #a7f3d0; /* Green border */
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            text-align: center;
+            background-color: #f0fdf4; border: 1px solid #a7f3d0;
+            border-radius: 0.75rem; padding: 1.5rem; text-align: center;
         }
         .language-selector select {
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            border: 1px solid #d1d5db;
+            padding: 0.5rem 1rem; border-radius: 0.375rem; border: 1px solid #d1d5db;
         }
-        /* Hide elements */
-        .hidden {
-            display: none;
-        }
-         /* Progress Bar */
+        .hidden { display: none; }
         .progress-bar-container {
-            width: 100%;
-            background-color: #e5e7eb; /* Light gray background */
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
-            overflow: hidden; /* Ensure inner bar respects border radius */
+            width: 100%; background-color: #e5e7eb; border-radius: 0.5rem;
+            margin-bottom: 1.5rem; overflow: hidden;
         }
         .progress-bar {
-            height: 10px;
-            background-color: #3b82f6; /* Blue */
-            width: 0%; /* Initial width */
-            border-radius: 0.5rem;
-            transition: width 0.3s ease-in-out;
+            height: 10px; background-color: #3b82f6; width: 0%;
+            border-radius: 0.5rem; transition: width 0.3s ease-in-out;
         }
-         /* Logo Style */
-        .header-logo {
-             width: 50px; /* Adjust size as needed */
-             height: 50px;
-             margin-right: 1rem; /* Space between logo and title */
+        .header-logo { width: 50px; height: 50px; margin-right: 1rem; }
+        .visualization-container {
+            margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #d1d5db;
+            display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center;
         }
-         /* Footer Style */
-        .footer-text {
-            font-size: 0.8rem; /* Smaller text */
-            color: #6b7280; /* Gray text */
-            text-align: center;
-            margin-top: 2rem; /* Space above footer */
-            border-top: 1px solid #e5e7eb; /* Separator line */
-            padding-top: 1rem; /* Space below separator */
+         @media (min-width: 640px) { .visualization-container { grid-template-columns: 1fr 1fr; } }
+        .chart-container {
+            position: relative; height: 250px; width: 100%;
+            max-width: 300px; margin: auto;
+        }
+        .scale-container {
+            width: 100%; padding: 1rem; background-color: #f9fafb;
+            border-radius: 0.5rem; border: 1px solid #e5e7eb;
+        }
+        .scale-bar {
+            height: 20px; background: linear-gradient(to right, #6ee7b7, #fde047, #f87171);
+            border-radius: 0.25rem; position: relative; margin-top: 0.5rem;
+        }
+        .scale-marker {
+            position: absolute; bottom: -5px; width: 2px; height: 30px;
+            background-color: #1f2937; transform: translateX(-50%); border-radius: 1px;
+        }
+        .scale-marker::after {
+             content: ''; position: absolute; bottom: -5px; left: 50%;
+             transform: translateX(-50%); width: 0; height: 0;
+             border-left: 5px solid transparent; border-right: 5px solid transparent;
+             border-top: 6px solid #1f2937;
+        }
+        .scale-labels {
+            display: flex; justify-content: space-between; font-size: 0.75rem;
+            color: #6b7280; margin-top: 0.75rem;
         }
     </style>
 </head>
@@ -133,7 +101,8 @@
 
         <div class="flex justify-between items-start mb-6">
              <div class="flex items-center">
-                 <img src="logo-del-colegio.png" alt="Logo del Proyecto" class="header-logo rounded-full" onerror="this.style.display='none'"> <div>
+                 <img src="logo-del-colegio.png" alt="Logo del Proyecto" class="header-logo rounded-full" onerror="this.style.display='none'">
+                 <div>
                      <h1 class="text-2xl md:text-3xl font-bold text-gray-800" data-translate="title">Calculadora de Huella de Carbono</h1>
                      <p class="text-gray-600" data-translate="subtitle">Descubre tu impacto ambiental respondiendo unas simples preguntas.</p>
                  </div>
@@ -151,12 +120,10 @@
         <div class="progress-bar-container">
             <div id="progress-bar" class="progress-bar"></div>
         </div>
-        <p class="text-center text-sm text-gray-500 mb-8" id="progress-text"><span data-translate="question">Pregunta</span> 1 / 14</p>
+        <p class="text-center text-sm text-gray-500 mb-8" id="progress-text"><span data-translate="question">Pregunta</span> 1 / 19</p>
 
         <form id="carbon-form">
-            <div id="questions-container">
-                </div>
-
+            <div id="questions-container"></div>
             <div id="navigation" class="flex justify-between mt-8 hidden">
                 <button type="button" id="prev-btn" class="nav-button nav-button-secondary" data-translate="prevButton">Anterior</button>
                 <button type="button" id="next-btn" class="nav-button nav-button-primary" data-translate="nextButton">Siguiente</button>
@@ -166,11 +133,30 @@
 
         <div id="result" class="result-section mt-8 hidden">
             <h2 class="text-xl font-semibold mb-3 text-green-800" data-translate="resultTitle">Tu Huella de Carbono Estimada</h2>
-            <p class="text-3xl font-bold mb-4 text-green-700"><span id="score">0</span> <span data-translate="resultUnit">toneladas de CO2e/año</span></p>
+            <p class="text-3xl font-bold mb-1 text-green-700"><span id="score">0</span> <span data-translate="resultUnit">toneladas de CO2e/año</span></p>
             <p class="text-gray-700 mb-4" id="result-message" data-translate="resultInfoDefault">Completa el cuestionario para ver tu resultado.</p>
-            <h3 class="text-lg font-semibold mt-6 mb-2 text-green-800" data-translate="tipsTitle">Consejos para Reducir tu Huella:</h3>
-            <ul id="tips-list" class="list-disc list-inside text-left text-gray-700 space-y-1">
-                </ul>
+
+            <div class="visualization-container">
+                 <div class="chart-container">
+                     <h3 class="text-lg font-semibold mb-2 text-gray-700" data-translate="pieChartTitle">Desglose por Categoría</h3>
+                     <canvas id="footprintPieChart"></canvas>
+                 </div>
+                 <div class="scale-container">
+                     <h3 class="text-lg font-semibold mb-2 text-gray-700" data-translate="scaleTitle">Tu Huella vs. Escala</h3>
+                     <div class="scale-bar">
+                         <div id="scale-marker" class="scale-marker" style="left: 0%;"></div>
+                     </div>
+                     <div class="scale-labels">
+                         <span data-translate="scaleLow">Baja</span>
+                         <span data-translate="scaleAvg">Promedio</span>
+                         <span data-translate="scaleHigh">Alta</span>
+                     </div>
+                      <p class="text-sm text-gray-600 mt-2" id="scale-explanation" data-translate="scaleAvgInfo">El 'Promedio' (50%) representa una huella media en esta escala.</p>
+                 </div>
+            </div>
+
+            <h3 class="text-lg font-semibold mt-8 pt-4 border-t border-gray-300 mb-2 text-green-800" data-translate="tipsTitle">Consejos para Reducir tu Huella:</h3>
+            <ul id="tips-list" class="list-disc list-inside text-left text-gray-700 space-y-1"></ul>
              <button type="button" id="restart-btn" class="nav-button nav-button-primary mt-6" data-translate="restartButton">Empezar de Nuevo</button>
         </div>
 
@@ -179,164 +165,144 @@
                  Hecho por Luis Marcelo Medina para un proyecto escolar de Liceo Campo Verde
              </p>
         </footer>
-        </div> <script>
+
+    </div> <script>
         // --- Translations ---
         const translations = {
             es: {
-                selectLanguage: "Selecciona Idioma:",
-                title: "Calculadora de Huella de Carbono",
-                subtitle: "Descubre tu impacto ambiental respondiendo unas simples preguntas.",
-                prevButton: "Anterior",
-                nextButton: "Siguiente",
-                submitButton: "Calcular Huella",
-                resultTitle: "Tu Huella de Carbono Estimada",
-                resultUnit: "toneladas de CO2e/año",
-                resultInfoDefault: "Completa el cuestionario para ver tu resultado.",
-                tipsTitle: "Consejos para Reducir tu Huella:",
-                restartButton: "Empezar de Nuevo",
-                question: "Pregunta",
-                footer_text: "Hecho por Luis Marcelo Medina para un proyecto escolar de Liceo Campo Verde", // Added footer text ES
-                // Questions & Options (Q1-Q14) ... [Kept for brevity, same as previous version]
-                q1_title: "Pregunta 1: Dieta - Carne Roja",
-                q1_text: "¿Con qué frecuencia consumes carne roja (res, cerdo, cordero)?",
-                q1_opt1: "Casi todos los días", q1_opt2: "Varias veces por semana", q1_opt3: "Rara vez o nunca",
-                q2_title: "Pregunta 2: Transporte Principal",
-                q2_text: "¿Cuál es tu medio de transporte principal para distancias largas (>15km)?",
-                q2_opt1: "Coche (gasolina/diésel)", q2_opt2: "Transporte público (bus/tren/metro)", q2_opt3: "Coche eléctrico/híbrido", q2_opt4: "Bicicleta/Caminar/Ninguno",
-                q3_title: "Pregunta 3: Energía en Casa",
-                q3_text: "¿Qué tan eficiente es el uso de energía en tu hogar?",
-                q3_opt1: "Poco eficiente (electrodomésticos viejos, sin aislamiento)", q3_opt2: "Moderadamente eficiente", q3_opt3: "Muy eficiente (LEDs, aislamiento, renovables)",
-                q4_title: "Pregunta 4: Consumo y Residuos",
-                q4_text: "¿Compras artículos nuevos (ropa, electrónicos) y reciclas?",
-                q4_opt1: "Compro a menudo, reciclo poco", q4_opt2: "Compro ocasionalmente, reciclo regularmente", q4_opt3: "Compro raramente (prefiero usado), reciclo mucho",
-                q5_title: "Pregunta 5: Viajes Aéreos (Cortos)",
-                q5_text: "¿Cuántos vuelos cortos (menos de 3 horas) realizas al año?",
-                q5_opt1: "Ninguno", q5_opt2: "1-2 vuelos", q5_opt3: "3-5 vuelos", q5_opt4: "Más de 5 vuelos",
-                q6_title: "Pregunta 6: Viajes Aéreos (Largos)",
-                q6_text: "¿Cuántos vuelos largos (más de 3 horas) realizas al año?",
-                q6_opt1: "Ninguno", q6_opt2: "1-2 vuelos", q6_opt3: "3-4 vuelos", q6_opt4: "Más de 4 vuelos",
-                q7_title: "Pregunta 7: Tamaño del Hogar",
-                q7_text: "¿Cuántas personas viven en tu hogar (incluyéndote)?",
-                q7_opt1: "Vivo solo/a", q7_opt2: "2 personas", q7_opt3: "3-4 personas", q7_opt4: "5 o más personas",
-                q8_title: "Pregunta 8: Tipo de Vivienda",
-                q8_text: "¿En qué tipo de vivienda resides principalmente?",
-                q8_opt1: "Casa grande independiente", q8_opt2: "Casa adosada / Dúplex", q8_opt3: "Apartamento / Piso",
-                q9_title: "Pregunta 9: Fuente de Energía Principal",
-                q9_text: "¿Cuál es la fuente principal de energía para calefacción/cocina en tu hogar?",
-                q9_opt1: "Carbón / Leña / Gasóleo", q9_opt2: "Gas natural / GLP", q9_opt3: "Electricidad (mix de red estándar)", q9_opt4: "Electricidad (fuentes renovables certificadas) / Sin calefacción",
-                q10_title: "Pregunta 10: Residuos Orgánicos",
-                q10_text: "¿Qué haces con tus residuos orgánicos (restos de comida)?",
-                q10_opt1: "Van a la basura normal", q10_opt2: "Compostaje casero / Recogida selectiva municipal", q10_opt3: "No genero casi residuos orgánicos",
-                q11_title: "Pregunta 11: Consumo de Agua",
-                q11_text: "¿Eres consciente de tu consumo de agua y tomas medidas para reducirlo?",
-                q11_opt1: "No mucho, uso agua sin restricciones", q11_opt2: "A veces, cierro grifos pero no mucho más", q11_opt3: "Sí, activamente (duchas cortas, reutilización, etc.)",
-                q12_title: "Pregunta 12: Transporte Secundario",
-                q12_text: "¿Utilizas coche (propio o compartido) para trayectos cortos (<5km) regularmente?",
-                q12_opt1: "Sí, casi siempre", q12_opt2: "A veces, si es necesario", q12_opt3: "No, prefiero caminar, bici o transporte público",
-                q13_title: "Pregunta 13: Compra Local y de Temporada",
-                q13_text: "¿Con qué frecuencia compras alimentos locales y de temporada?",
-                q13_opt1: "Rara vez, compro lo que encuentro", q13_opt2: "Ocasionalmente, si está disponible", q13_opt3: "Frecuentemente, busco activamente productos locales",
-                q14_title: "Pregunta 14: Dieta - Lácteos y Pollo",
-                q14_text: "¿Cuál es tu consumo de lácteos (leche, queso, yogur) y pollo/aves?",
-                q14_opt1: "Alto consumo diario", q14_opt2: "Consumo moderado (varias veces por semana)", q14_opt3: "Bajo consumo o nulo",
-                // Result Messages & Tips ... [Kept for brevity]
-                result_low: "Tu huella es relativamente baja. ¡Excelente trabajo! Sigue así y comparte tus hábitos.",
-                result_medium: "Tu huella está en un rango promedio. Hay varias oportunidades claras para mejorar.",
-                result_high: "Tu huella es relativamente alta. Es un buen momento para considerar cambios significativos en tu estilo de vida.",
+                // ... (all previous ES translations)
+                footer_text: "Hecho por Luis Marcelo Medina para un proyecto escolar de Liceo Campo Verde",
+                pieChartTitle: "Desglose por Categoría", scaleTitle: "Tu Huella vs. Escala",
+                scaleLow: "Baja", scaleAvg: "Promedio", scaleHigh: "Alta",
+                scaleAvgInfo: "El 'Promedio' (50%) representa una huella media en esta escala.",
+                category_diet: "Alimentación", category_transport: "Transporte", category_home: "Hogar",
+                category_consumption: "Consumo", category_travel: "Viajes",
+                selectLanguage: "Selecciona Idioma:", title: "Calculadora de Huella de Carbono", subtitle: "Descubre tu impacto ambiental respondiendo unas simples preguntas.", prevButton: "Anterior", nextButton: "Siguiente", submitButton: "Calcular Huella", resultTitle: "Tu Huella de Carbono Estimada", resultUnit: "toneladas de CO2e/año", resultInfoDefault: "Completa el cuestionario para ver tu resultado.", tipsTitle: "Consejos para Reducir tu Huella:", restartButton: "Empezar de Nuevo", question: "Pregunta",
+                q1_title: "Pregunta 1: Dieta - Carne Roja", q1_text: "¿Con qué frecuencia consumes carne roja (res, cerdo, cordero)?", q1_opt1: "Casi todos los días", q1_opt2: "Varias veces por semana", q1_opt3: "Rara vez o nunca",
+                q2_title: "Pregunta 2: Transporte Principal (>15km)", q2_text: "¿Cuál es tu medio de transporte principal para distancias largas (>15km)?", q2_opt1: "Coche (gasolina/diésel)", q2_opt2: "Transporte público (bus/tren/metro)", q2_opt3: "Coche eléctrico/híbrido", q2_opt4: "Bicicleta/Caminar/Ninguno",
+                q3_title: "Pregunta 3: Eficiencia Energética Hogar", q3_text: "¿Qué tan eficiente es el uso de energía en tu hogar?", q3_opt1: "Poco eficiente (electrodomésticos viejos, sin aislamiento)", q3_opt2: "Moderadamente eficiente", q3_opt3: "Muy eficiente (LEDs, aislamiento, renovables)",
+                q4_title: "Pregunta 4: Consumo y Residuos", q4_text: "¿Compras artículos nuevos (ropa, electrónicos) y reciclas?", q4_opt1: "Compro a menudo, reciclo poco", q4_opt2: "Compro ocasionalmente, reciclo regularmente", q4_opt3: "Compro raramente (prefiero usado), reciclo mucho",
+                q5_title: "Pregunta 5: Viajes Aéreos (Cortos)", q5_text: "¿Cuántos vuelos cortos (menos de 3 horas) realizas al año?", q5_opt1: "Ninguno", q5_opt2: "1-2 vuelos", q5_opt3: "3-5 vuelos", q5_opt4: "Más de 5 vuelos",
+                q6_title: "Pregunta 6: Viajes Aéreos (Largos)", q6_text: "¿Cuántos vuelos largos (más de 3 horas) realizas al año?", q6_opt1: "Ninguno", q6_opt2: "1-2 vuelos", q6_opt3: "3-4 vuelos", q6_opt4: "Más de 4 vuelos",
+                q7_title: "Pregunta 7: Tamaño del Hogar", q7_text: "¿Cuántas personas viven en tu hogar (incluyéndote)?", q7_opt1: "Vivo solo/a", q7_opt2: "2 personas", q7_opt3: "3-4 personas", q7_opt4: "5 o más personas",
+                q8_title: "Pregunta 8: Tipo de Vivienda", q8_text: "¿En qué tipo de vivienda resides principalmente?", q8_opt1: "Casa grande independiente", q8_opt2: "Casa adosada / Dúplex", q8_opt3: "Apartamento / Piso",
+                q9_title: "Pregunta 9: Fuente de Energía Principal", q9_text: "¿Cuál es la fuente principal de energía para calefacción/cocina en tu hogar?", q9_opt1: "Carbón / Leña / Gasóleo", q9_opt2: "Gas natural / GLP", q9_opt3: "Electricidad (mix de red estándar)", q9_opt4: "Electricidad (fuentes renovables certificadas) / Sin calefacción",
+                q10_title: "Pregunta 10: Residuos Orgánicos", q10_text: "¿Qué haces con tus residuos orgánicos (restos de comida)?", q10_opt1: "Van a la basura normal", q10_opt2: "Compostaje casero / Recogida selectiva municipal", q10_opt3: "No genero casi residuos orgánicos",
+                q11_title: "Pregunta 11: Consumo de Agua", q11_text: "¿Eres consciente de tu consumo de agua y tomas medidas para reducirlo?", q11_opt1: "No mucho, uso agua sin restricciones", q11_opt2: "A veces, cierro grifos pero no mucho más", q11_opt3: "Sí, activamente (duchas cortas, reutilización, etc.)",
+                q12_title: "Pregunta 12: Transporte Secundario (<5km)", q12_text: "¿Utilizas coche (propio o compartido) para trayectos cortos (<5km) regularmente?", q12_opt1: "Sí, casi siempre", q12_opt2: "A veces, si es necesario", q12_opt3: "No, prefiero caminar, bici o transporte público",
+                q13_title: "Pregunta 13: Compra Local y de Temporada", q13_text: "¿Con qué frecuencia compras alimentos locales y de temporada?", q13_opt1: "Rara vez, compro lo que encuentro", q13_opt2: "Ocasionalmente, si está disponible", q13_opt3: "Frecuentemente, busco activamente productos locales",
+                q14_title: "Pregunta 14: Dieta - Lácteos y Pollo", q14_text: "¿Cuál es tu consumo de lácteos (leche, queso, yogur) y pollo/aves?", q14_opt1: "Alto consumo diario", q14_opt2: "Consumo moderado (varias veces por semana)", q14_opt3: "Bajo consumo o nulo",
+                // New Questions ES
+                q15_title: "Pregunta 15: Dispositivos Electrónicos", q15_text: "¿Cuántos dispositivos electrónicos personales (móvil, portátil, tablet) posees y con qué frecuencia los reemplazas?", q15_opt1: "Pocos, reemplazo raramente", q15_opt2: "Número moderado, reemplazo cada pocos años", q15_opt3: "Muchos, reemplazo a menudo",
+                q16_title: "Pregunta 16: Mascotas", q16_text: "¿Tienes mascotas, especialmente perros grandes o gatos?", q16_opt1: "No tengo mascotas", q16_opt2: "Mascotas pequeñas (aves, peces, hámster)", q16_opt3: "Un gato o perro mediano", q16_opt4: "Varios gatos/perros o perro grande",
+                q17_title: "Pregunta 17: Hábitos de Ropa", q17_text: "¿Con qué frecuencia compras ropa nueva y de qué tipo?", q17_opt1: "Raramente, principalmente segunda mano/sostenible", q17_opt2: "Por temporada, mezcla de nuevo/usado", q17_opt3: "Frecuentemente, principalmente moda rápida ('fast fashion')",
+                q18_title: "Pregunta 18: Inversiones", q18_text: "¿Están tus ahorros/inversiones en fondos sostenibles o verdes?", q18_opt1: "Sí, la mayoría/todos", q18_opt2: "Algunos sí", q18_opt3: "No, o no lo sé",
+                q19_title: "Pregunta 19: Transporte Diario (<10km)", q19_text: "Para tus traslados diarios < 10km (trabajo/estudio), ¿cuál es tu método principal?", q19_opt1: "Caminar / Bicicleta", q19_opt2: "Transporte Público (Bus/Metro/Trole)", q19_opt3: "Motocicleta", q19_opt4: "Coche (Gas/Diésel/Compartido)", q19_opt5: "Coche Eléctrico",
+                // Result Messages & Tips (ES - same as before)
+                result_low: "Tu huella es relativamente baja. ¡Excelente trabajo! Sigue así y comparte tus hábitos.", result_medium: "Tu huella está en un rango promedio. Hay varias oportunidades claras para mejorar.", result_high: "Tu huella es relativamente alta. Es un buen momento para considerar cambios significativos en tu estilo de vida.",
                 tip1: "Reduce drásticamente el consumo de carne roja y lácteos.", tip2: "Prioriza el transporte público, bicicleta o caminar. Considera un vehículo eléctrico si necesitas coche.", tip3: "Mejora la eficiencia energética: aislamiento, LEDs, termostatos inteligentes, electrodomésticos A+++.", tip4: "Adopta el 'Reducir, Reutilizar, Reciclar'. Compra menos, elige segunda mano, repara.", tip5: "Minimiza los viajes en avión, especialmente los cortos. Compensa las emisiones cuando vueles.", tip6: "Apoya las energías renovables, ya sea contratando tarifas verdes o instalando paneles solares.", tip7: "Composta tus residuos orgánicos.", tip8: "Consume productos locales y de temporada para reducir la huella del transporte de alimentos.", tip9: "Ahorra agua en casa.", tip10:"Considera el impacto del tamaño de tu hogar y busca formas de compartir recursos."
             },
             en: {
-                selectLanguage: "Select Language:",
-                title: "Carbon Footprint Calculator",
-                subtitle: "Discover your environmental impact by answering a few simple questions.",
-                prevButton: "Previous",
-                nextButton: "Next",
-                submitButton: "Calculate Footprint",
-                resultTitle: "Your Estimated Carbon Footprint",
-                resultUnit: "tonnes CO2e/year",
-                resultInfoDefault: "Complete the questionnaire to see your result.",
-                tipsTitle: "Tips to Reduce Your Footprint:",
-                restartButton: "Start Over",
-                question: "Question",
-                footer_text: "Made by Luis Marcelo Medina for a school project at Liceo Campo Verde", // Added footer text EN
-                // Questions & Options (Q1-Q14 - English placeholders) ... [Kept for brevity]
+                // ... (all previous EN translations - placeholders used before)
+                footer_text: "Made by Luis Marcelo Medina for a school project at Liceo Campo Verde",
+                pieChartTitle: "Breakdown by Category", scaleTitle: "Your Footprint vs. Scale",
+                scaleLow: "Low", scaleAvg: "Average", scaleHigh: "High",
+                scaleAvgInfo: "The 'Average' (50%) represents a medium footprint on this scale.",
+                category_diet: "Diet", category_transport: "Transport", category_home: "Home",
+                category_consumption: "Consumption", category_travel: "Travel",
+                selectLanguage: "Select Language:", title: "Carbon Footprint Calculator", subtitle: "Discover your environmental impact by answering a few simple questions.", prevButton: "Previous", nextButton: "Next", submitButton: "Calculate Footprint", resultTitle: "Your Estimated Carbon Footprint", resultUnit: "tonnes CO2e/year", resultInfoDefault: "Complete the questionnaire to see your result.", tipsTitle: "Tips to Reduce Your Footprint:", restartButton: "Start Over", question: "Question",
                 q1_title: "Question 1: Diet - Red Meat", q1_text: "How often do you eat red meat (beef, pork, lamb)?", q1_opt1: "Almost every day", q1_opt2: "Several times a week", q1_opt3: "Rarely or never",
-                q2_title: "Question 2: Main Transport", q2_text: "What is your primary mode of transport for long distances (>15km)?", q2_opt1: "Car (gasoline/diesel)", q2_opt2: "Public transport", q2_opt3: "Electric/Hybrid car", q2_opt4: "Bicycle/Walking/None",
+                q2_title: "Question 2: Main Transport (>15km)", q2_text: "What is your primary mode of transport for long distances (>15km)?", q2_opt1: "Car (gasoline/diesel)", q2_opt2: "Public transport", q2_opt3: "Electric/Hybrid car", q2_opt4: "Bicycle/Walking/None",
                 q3_title: "Question 3: Home Energy Efficiency", q3_text: "How energy efficient is your home?", q3_opt1: "Not very efficient", q3_opt2: "Moderately efficient", q3_opt3: "Very efficient",
-                q4_title: "Question 4: Consumption & Waste", q4_text: "Do you buy new items and recycle?", q4_opt1: "Buy often, recycle little", q4_opt2: "Buy occasionally, recycle regularly", q4_opt3: "Buy rarely, recycle a lot",
+                q4_title: "Question 4: Consumption & Waste", q4_text: "Do you buy new items (clothes, electronics) and recycle?", q4_opt1: "Buy often, recycle little", q4_opt2: "Buy occasionally, recycle regularly", q4_opt3: "Buy rarely, recycle a lot",
                 q5_title: "Question 5: Air Travel (Short)", q5_text: "How many short-haul flights (under 3 hours) per year?", q5_opt1: "None", q5_opt2: "1-2 flights", q5_opt3: "3-5 flights", q5_opt4: "More than 5",
                 q6_title: "Question 6: Air Travel (Long)", q6_text: "How many long-haul flights (over 3 hours) per year?", q6_opt1: "None", q6_opt2: "1-2 flights", q6_opt3: "3-4 flights", q6_opt4: "More than 4",
                 q7_title: "Question 7: Household Size", q7_text: "How many people live in your household?", q7_opt1: "Live alone", q7_opt2: "2 people", q7_opt3: "3-4 people", q7_opt4: "5 or more",
-                q8_title: "Question 8: Housing Type", q8_text: "What type of housing?", q8_opt1: "Large detached house", q8_opt2: "Semi-detached/Duplex", q8_opt3: "Apartment/Flat",
+                q8_title: "Question 8: Housing Type", q8_text: "What type of housing do you primarily live in?", q8_opt1: "Large detached house", q8_opt2: "Semi-detached/Duplex", q8_opt3: "Apartment/Flat",
                 q9_title: "Question 9: Primary Energy Source", q9_text: "Main energy source for heating/cooking?", q9_opt1: "Coal/Wood/Oil", q9_opt2: "Natural gas/LPG", q9_opt3: "Standard electricity", q9_opt4: "Renewable electricity/None",
-                q10_title: "Question 10: Organic Waste", q10_text: "What about organic waste?", q10_opt1: "General waste", q10_opt2: "Compost/Collection", q10_opt3: "Almost none",
+                q10_title: "Question 10: Organic Waste", q10_text: "What do you do with organic waste?", q10_opt1: "General waste", q10_opt2: "Compost/Collection", q10_opt3: "Almost none",
                 q11_title: "Question 11: Water Consumption", q11_text: "Are you conscious of water use?", q11_opt1: "Not really", q11_opt2: "Sometimes", q11_opt3: "Yes, actively",
-                q12_title: "Question 12: Secondary Transport", q12_text: "Use car for short trips (<5km)?", q12_opt1: "Yes, almost always", q12_opt2: "Sometimes", q12_opt3: "No, prefer walk/bike/transit",
+                q12_title: "Question 12: Secondary Transport (<5km)", q12_text: "Use car for short trips (<5km) regularly?", q12_opt1: "Yes, almost always", q12_opt2: "Sometimes", q12_opt3: "No, prefer walk/bike/transit",
                 q13_title: "Question 13: Local & Seasonal Food", q13_text: "Buy local/seasonal food often?", q13_opt1: "Rarely", q13_opt2: "Occasionally", q13_opt3: "Frequently",
                 q14_title: "Question 14: Diet - Dairy & Poultry", q14_text: "Dairy and poultry consumption?", q14_opt1: "High daily", q14_opt2: "Moderate", q14_opt3: "Low or none",
-                // Result Messages & Tips (English Placeholders) ... [Kept for brevity]
-                result_low: "Your footprint is relatively low. Excellent work!", result_medium: "Your footprint is average. Room for improvement.", result_high: "Your footprint is relatively high. Consider significant changes.",
-                tip1: "Reduce red meat and dairy.", tip2: "Use sustainable transport.", tip3: "Improve home energy efficiency.", tip4: "Reduce, Reuse, Recycle.", tip5: "Minimize air travel.", tip6: "Support renewables.", tip7: "Compost organic waste.", tip8: "Eat local/seasonal.", tip9: "Save water.", tip10:"Consider household size impact."
+                 // New Questions EN
+                q15_title: "Question 15: Electronic Devices", q15_text: "How many personal electronic devices (phone, laptop, tablet) do you own and how often do you replace them?", q15_opt1: "Few, replaced rarely", q15_opt2: "Moderate number, replaced every few years", q15_opt3: "Many, replaced often",
+                q16_title: "Question 16: Pets", q16_text: "Do you have pets, especially large dogs or cats?", q16_opt1: "No pets", q16_opt2: "Small pets (birds, fish, hamster)", q16_opt3: "One cat or medium dog", q16_opt4: "Multiple cats/dogs or large dog",
+                q17_title: "Question 17: Clothing Habits", q17_text: "How often do you buy new clothes, and what type?", q17_opt1: "Rarely, mostly second-hand/sustainable", q17_opt2: "Seasonally, mix of new/used", q17_opt3: "Frequently, mostly fast fashion",
+                q18_title: "Question 18: Investments", q18_text: "Are your savings/investments in sustainable or green funds?", q18_opt1: "Yes, mostly/all", q18_opt2: "Some are", q18_opt3: "No, or I don't know",
+                q19_title: "Question 19: Daily Commute (<10km)", q19_text: "For your daily commutes < 10km (work/study), what's your primary method?", q19_opt1: "Walk / Bike", q19_opt2: "Public Transport (Bus/Metro)", q19_opt3: "Motorcycle", q19_opt4: "Car (Gas/Diesel/Rideshare)", q19_opt5: "Electric Car",
+                // Result Messages & Tips (EN - same as before)
+                result_low: "Your footprint is relatively low. Excellent work! Keep it up and share your habits.", result_medium: "Your footprint is in the average range. There are several clear opportunities for improvement.", result_high: "Your footprint is relatively high. It's a good time to consider significant lifestyle changes.",
+                tip1: "Drastically reduce red meat and dairy consumption.", tip2: "Prioritize public transport, cycling, or walking. Consider an EV if you need a car.", tip3: "Improve energy efficiency: insulation, LEDs, smart thermostats, A+++ appliances.", tip4: "Embrace 'Reduce, Reuse, Recycle'. Buy less, choose second-hand, repair.", tip5: "Minimize air travel, especially short flights. Offset emissions when you fly.", tip6: "Support renewable energy, either through green tariffs or installing solar panels.", tip7: "Compost your organic waste.", tip8: "Consume local and seasonal products to reduce food transport footprint.", tip9: "Save water at home.", tip10:"Consider the impact of your household size and look for ways to share resources."
             },
             fr: {
-                selectLanguage: "Choisir la langue:",
-                title: "Calculateur d'Empreinte Carbone",
-                subtitle: "Découvrez votre impact environnemental.",
-                prevButton: "Précédent",
-                nextButton: "Suivant",
-                submitButton: "Calculer",
-                resultTitle: "Votre Empreinte Carbone Estimée",
-                resultUnit: "tonnes CO2e/an",
-                resultInfoDefault: "Complétez le questionnaire.",
-                tipsTitle: "Conseils pour Réduire:",
-                restartButton: "Recommencer",
-                question: "Question",
-                footer_text: "Réalisé par Luis Marcelo Medina pour un projet scolaire du Liceo Campo Verde", // Added footer text FR
-                 // Questions & Options (Q1-Q14 - French placeholders) ... [Kept for brevity]
-                 q1_title: "Question 1 : Viande Rouge", q1_text: "Fréquence de consommation de viande rouge ?", q1_opt1: "Presque tous les jours", q1_opt2: "Plusieurs fois/semaine", q1_opt3: "Rarement/jamais",
-                 q2_title: "Question 2 : Transport Principal", q2_text: "Transport principal pour longues distances (>15km) ?", q2_opt1: "Voiture (essence/diesel)", q2_opt2: "Transport public", q2_opt3: "Voiture élec./hybride", q2_opt4: "Vélo/Marche/Aucun",
-                 q3_title: "Question 3 : Efficacité Énergétique", q3_text: "Efficacité énergétique du logement ?", q3_opt1: "Peu efficace", q3_opt2: "Modérément", q3_opt3: "Très efficace",
-                 q4_title: "Question 4 : Consommation/Déchets", q4_text: "Achat d'articles neufs et recyclage ?", q4_opt1: "Achète souvent, recycle peu", q4_opt2: "Achète occas., recycle rég.", q4_opt3: "Achète rarement, recycle bcp",
-                 q5_title: "Question 5 : Vols Courts", q5_text: "Combien de vols courts (<3h) par an ?", q5_opt1: "Aucun", q5_opt2: "1-2 vols", q5_opt3: "3-5 vols", q5_opt4: "Plus de 5",
-                 q6_title: "Question 6 : Vols Longs", q6_text: "Combien de vols longs (>3h) par an ?", q6_opt1: "Aucun", q6_opt2: "1-2 vols", q6_opt3: "3-4 vols", q6_opt4: "Plus de 4",
-                 q7_title: "Question 7 : Taille Foyer", q7_text: "Combien de personnes dans le foyer ?", q7_opt1: "Vis seul(e)", q7_opt2: "2 personnes", q7_opt3: "3-4 personnes", q7_opt4: "5 ou plus",
-                 q8_title: "Question 8 : Type Logement", q8_text: "Type de logement principal ?", q8_opt1: "Grande maison indiv.", q8_opt2: "Maison mitoyenne/Duplex", q8_opt3: "Appartement",
-                 q9_title: "Question 9 : Source Énergie", q9_text: "Source énergie principale (chauffage/cuisine) ?", q9_opt1: "Charbon/Bois/Fioul", q9_opt2: "Gaz naturel/GPL", q9_opt3: "Électricité standard", q9_opt4: "Électricité renouvelable/Aucun",
-                 q10_title: "Question 10 : Déchets Organiques", q10_text: "Que faites-vous des déchets organiques ?", q10_opt1: "Ordures ménagères", q10_opt2: "Compost/Collecte", q10_opt3: "Presque aucun",
-                 q11_title: "Question 11 : Consommation Eau", q11_text: "Conscient de la consommation d'eau ?", q11_opt1: "Pas vraiment", q11_opt2: "Parfois", q11_opt3: "Oui, activement",
-                 q12_title: "Question 12 : Transport Secondaire", q12_text: "Voiture pour courts trajets (<5km) ?", q12_opt1: "Oui, presque toujours", q12_opt2: "Parfois", q12_opt3: "Non (marche/vélo/transit)",
-                 q13_title: "Question 13 : Achats Locaux/Saison", q13_text: "Achetez-vous local/saison souvent ?", q13_opt1: "Rarement", q13_opt2: "Occasionnellement", q13_opt3: "Fréquemment",
-                 q14_title: "Question 14 : Laitages/Volaille", q14_text: "Consommation de laitage et volaille ?", q14_opt1: "Élevée quotidienne", q14_opt2: "Modérée", q14_opt3: "Faible ou nulle",
-                // Result Messages & Tips (French Placeholders) ... [Kept for brevity]
+                // ... (all previous FR translations - placeholders used before)
+                footer_text: "Réalisé par Luis Marcelo Medina pour un projet scolaire du Liceo Campo Verde",
+                pieChartTitle: "Répartition par Catégorie", scaleTitle: "Votre Empreinte vs. Échelle",
+                scaleLow: "Faible", scaleAvg: "Moyenne", scaleHigh: "Élevée",
+                scaleAvgInfo: "La 'Moyenne' (50%) représente une empreinte moyenne sur cette échelle.",
+                category_diet: "Alimentation", category_transport: "Transport", category_home: "Logement",
+                category_consumption: "Consommation", category_travel: "Voyages",
+                selectLanguage: "Choisir la langue:", title: "Calculateur d'Empreinte Carbone", subtitle: "Découvrez votre impact environnemental.", prevButton: "Précédent", nextButton: "Suivant", submitButton: "Calculer", resultTitle: "Votre Empreinte Carbone Estimée", resultUnit: "tonnes CO2e/an", resultInfoDefault: "Complétez le questionnaire.", tipsTitle: "Conseils pour Réduire:", restartButton: "Recommencer", question: "Question",
+                q1_title: "Question 1 : Viande Rouge", q1_text: "Fréquence de consommation de viande rouge ?", q1_opt1: "Presque tous les jours", q1_opt2: "Plusieurs fois/semaine", q1_opt3: "Rarement/jamais",
+                q2_title: "Question 2 : Transport Principal (>15km)", q2_text: "Transport principal pour longues distances (>15km) ?", q2_opt1: "Voiture (essence/diesel)", q2_opt2: "Transport public", q2_opt3: "Voiture élec./hybride", q2_opt4: "Vélo/Marche/Aucun",
+                q3_title: "Question 3 : Efficacité Énergétique", q3_text: "Efficacité énergétique du logement ?", q3_opt1: "Peu efficace", q3_opt2: "Modérément", q3_opt3: "Très efficace",
+                q4_title: "Question 4 : Consommation/Déchets", q4_text: "Achat d'articles neufs et recyclage ?", q4_opt1: "Achète souvent, recycle peu", q4_opt2: "Achète occas., recycle rég.", q4_opt3: "Achète rarement, recycle bcp",
+                q5_title: "Question 5 : Vols Courts", q5_text: "Combien de vols courts (<3h) par an ?", q5_opt1: "Aucun", q5_opt2: "1-2 vols", q5_opt3: "3-5 vols", q5_opt4: "Plus de 5",
+                q6_title: "Question 6 : Vols Longs", q6_text: "Combien de vols longs (>3h) par an ?", q6_opt1: "Aucun", q6_opt2: "1-2 vols", q6_opt3: "3-4 vols", q6_opt4: "Plus de 4",
+                q7_title: "Question 7 : Taille Foyer", q7_text: "Combien de personnes dans le foyer ?", q7_opt1: "Vis seul(e)", q7_opt2: "2 personnes", q7_opt3: "3-4 personnes", q7_opt4: "5 ou plus",
+                q8_title: "Question 8 : Type Logement", q8_text: "Type de logement principal ?", q8_opt1: "Grande maison indiv.", q8_opt2: "Maison mitoyenne/Duplex", q8_opt3: "Appartement",
+                q9_title: "Question 9 : Source Énergie", q9_text: "Source énergie principale (chauffage/cuisine) ?", q9_opt1: "Charbon/Bois/Fioul", q9_opt2: "Gaz naturel/GPL", q9_opt3: "Électricité standard", q9_opt4: "Électricité renouvelable/Aucun",
+                q10_title: "Question 10 : Déchets Organiques", q10_text: "Que faites-vous des déchets organiques ?", q10_opt1: "Ordures ménagères", q10_opt2: "Compost/Collecte", q10_opt3: "Presque aucun",
+                q11_title: "Question 11 : Consommation Eau", q11_text: "Conscient de la consommation d'eau ?", q11_opt1: "Pas vraiment", q11_opt2: "Parfois", q11_opt3: "Oui, activement",
+                q12_title: "Question 12 : Transport Secondaire (<5km)", q12_text: "Voiture pour courts trajets (<5km) ?", q12_opt1: "Oui, presque toujours", q12_opt2: "Parfois", q12_opt3: "Non (marche/vélo/transit)",
+                q13_title: "Question 13 : Achats Locaux/Saison", q13_text: "Achetez-vous local/saison souvent ?", q13_opt1: "Rarement", q13_opt2: "Occasionnellement", q13_opt3: "Fréquemment",
+                q14_title: "Question 14 : Laitages/Volaille", q14_text: "Consommation de laitage et volaille ?", q14_opt1: "Élevée quotidienne", q14_opt2: "Modérée", q14_opt3: "Faible ou nulle",
+                // New Questions FR
+                q15_title: "Question 15 : Appareils Électroniques", q15_text: "Combien d'appareils électroniques personnels possédez-vous et à quelle fréquence les remplacez-vous ?", q15_opt1: "Peu, remplacés rarement", q15_opt2: "Nombre modéré, remplacés tous les quelques ans", q15_opt3: "Beaucoup, remplacés souvent",
+                q16_title: "Question 16 : Animaux Domestiques", q16_text: "Avez-vous des animaux domestiques, en particulier de grands chiens ou des chats ?", q16_opt1: "Pas d'animaux", q16_opt2: "Petits animaux (oiseaux, poissons, hamster)", q16_opt3: "Un chat ou chien moyen", q16_opt4: "Plusieurs chats/chiens ou grand chien",
+                q17_title: "Question 17 : Habitudes Vestimentaires", q17_text: "À quelle fréquence achetez-vous des vêtements neufs et de quel type ?", q17_opt1: "Rarement, surtout d'occasion/durable", q17_opt2: "Selon la saison, mélange neuf/occasion", q17_opt3: "Fréquemment, surtout 'fast fashion'",
+                q18_title: "Question 18 : Investissements", q18_text: "Vos économies/investissements sont-ils dans des fonds durables ou verts ?", q18_opt1: "Oui, la plupart/tous", q18_opt2: "Certains oui", q18_opt3: "Non, ou je ne sais pas",
+                q19_title: "Question 19 : Trajet Quotidien (<10km)", q19_text: "Pour vos trajets quotidiens < 10km (travail/études), quelle est votre méthode principale ?", q19_opt1: "Marche / Vélo", q19_opt2: "Transport Public (Bus/Métro)", q19_opt3: "Moto", q19_opt4: "Voiture (Essence/Diesel/Covoit.)", q19_opt5: "Voiture Électrique",
+                // Result Messages & Tips (FR - same as before)
                 result_low: "Votre empreinte est faible. Excellent !", result_medium: "Votre empreinte est moyenne. Améliorations possibles.", result_high: "Votre empreinte est élevée. Changements importants suggérés.",
                 tip1: "Réduire viande rouge/laitages.", tip2: "Transport durable.", tip3: "Efficacité énergétique maison.", tip4: "Réduire, Réutiliser, Recycler.", tip5: "Minimiser vols.", tip6: "Soutenir renouvelables.", tip7: "Composter déchets org.", tip8: "Manger local/saison.", tip9: "Économiser l'eau.", tip10:"Considérer taille foyer."
             }
         };
 
         // --- Calculator Logic ---
-        const questions = [ // [Same questions array as previous version - kept for brevity]
-             { id: 'q1', weight: 1.5, options: [ { value: 3, text_key: 'q1_opt1' }, { value: 2, text_key: 'q1_opt2' }, { value: 1, text_key: 'q1_opt3' } ], title_key: 'q1_title', text_key: 'q1_text' },
-            { id: 'q2', weight: 1.8, options: [ { value: 4, text_key: 'q2_opt1' }, { value: 2, text_key: 'q2_opt2' }, { value: 1, text_key: 'q2_opt3' }, { value: 0, text_key: 'q2_opt4' } ], title_key: 'q2_title', text_key: 'q2_text' },
-            { id: 'q3', weight: 1.2, options: [ { value: 3, text_key: 'q3_opt1' }, { value: 2, text_key: 'q3_opt2' }, { value: 1, text_key: 'q3_opt3' } ], title_key: 'q3_title', text_key: 'q3_text' },
-            { id: 'q4', weight: 1.0, options: [ { value: 3, text_key: 'q4_opt1' }, { value: 2, text_key: 'q4_opt2' }, { value: 1, text_key: 'q4_opt3' } ], title_key: 'q4_title', text_key: 'q4_text' },
-            { id: 'q5', weight: 2.5, options: [ { value: 0, text_key: 'q5_opt1' }, { value: 2, text_key: 'q5_opt2' }, { value: 4, text_key: 'q5_opt3' }, { value: 6, text_key: 'q5_opt4' } ], title_key: 'q5_title', text_key: 'q5_text' },
-            { id: 'q6', weight: 3.0, options: [ { value: 0, text_key: 'q6_opt1' }, { value: 3, text_key: 'q6_opt2' }, { value: 6, text_key: 'q6_opt3' }, { value: 9, text_key: 'q6_opt4' } ], title_key: 'q6_title', text_key: 'q6_text' },
-            { id: 'q7', weight: 0.8, options: [ { value: 3, text_key: 'q7_opt1' }, { value: 2, text_key: 'q7_opt2' }, { value: 1, text_key: 'q7_opt3' }, { value: 0.5, text_key: 'q7_opt4' } ], title_key: 'q7_title', text_key: 'q7_text' },
-            { id: 'q8', weight: 0.7, options: [ { value: 3, text_key: 'q8_opt1' }, { value: 2, text_key: 'q8_opt2' }, { value: 1, text_key: 'q8_opt3' } ], title_key: 'q8_title', text_key: 'q8_text' },
-            { id: 'q9', weight: 1.4, options: [ { value: 4, text_key: 'q9_opt1' }, { value: 3, text_key: 'q9_opt2' }, { value: 2, text_key: 'q9_opt3' }, { value: 1, text_key: 'q9_opt4' } ], title_key: 'q9_title', text_key: 'q9_text' },
-            { id: 'q10', weight: 0.6, options: [ { value: 2, text_key: 'q10_opt1' }, { value: 0, text_key: 'q10_opt2' }, { value: 0, text_key: 'q10_opt3' } ], title_key: 'q10_title', text_key: 'q10_text' },
-            { id: 'q11', weight: 0.5, options: [ { value: 2, text_key: 'q11_opt1' }, { value: 1, text_key: 'q11_opt2' }, { value: 0, text_key: 'q11_opt3' } ], title_key: 'q11_title', text_key: 'q11_text' },
-            { id: 'q12', weight: 0.9, options: [ { value: 3, text_key: 'q12_opt1' }, { value: 1.5, text_key: 'q12_opt2' }, { value: 0, text_key: 'q12_opt3' } ], title_key: 'q12_title', text_key: 'q12_text' },
-            { id: 'q13', weight: 0.4, options: [ { value: 2, text_key: 'q13_opt1' }, { value: 1, text_key: 'q13_opt2' }, { value: 0, text_key: 'q13_opt3' } ], title_key: 'q13_title', text_key: 'q13_text' },
-            { id: 'q14', weight: 1.0, options: [ { value: 2, text_key: 'q14_opt1' }, { value: 1, text_key: 'q14_opt2' }, { value: 0.5, text_key: 'q14_opt3' } ], title_key: 'q14_title', text_key: 'q14_text' }
+        const questions = [ // Now 19 questions
+            // Original 14 questions...
+            { id: 'q1', weight: 1.5, category: 'diet', options: [ { value: 3, text_key: 'q1_opt1' }, { value: 2, text_key: 'q1_opt2' }, { value: 1, text_key: 'q1_opt3' } ], title_key: 'q1_title', text_key: 'q1_text' },
+            { id: 'q2', weight: 1.8, category: 'transport', options: [ { value: 4, text_key: 'q2_opt1' }, { value: 2, text_key: 'q2_opt2' }, { value: 1, text_key: 'q2_opt3' }, { value: 0, text_key: 'q2_opt4' } ], title_key: 'q2_title', text_key: 'q2_text' },
+            { id: 'q3', weight: 1.2, category: 'home', options: [ { value: 3, text_key: 'q3_opt1' }, { value: 2, text_key: 'q3_opt2' }, { value: 1, text_key: 'q3_opt3' } ], title_key: 'q3_title', text_key: 'q3_text' },
+            { id: 'q4', weight: 1.0, category: 'consumption', options: [ { value: 3, text_key: 'q4_opt1' }, { value: 2, text_key: 'q4_opt2' }, { value: 1, text_key: 'q4_opt3' } ], title_key: 'q4_title', text_key: 'q4_text' },
+            { id: 'q5', weight: 2.5, category: 'travel', options: [ { value: 0, text_key: 'q5_opt1' }, { value: 2, text_key: 'q5_opt2' }, { value: 4, text_key: 'q5_opt3' }, { value: 6, text_key: 'q5_opt4' } ], title_key: 'q5_title', text_key: 'q5_text' },
+            { id: 'q6', weight: 3.0, category: 'travel', options: [ { value: 0, text_key: 'q6_opt1' }, { value: 3, text_key: 'q6_opt2' }, { value: 6, text_key: 'q6_opt3' }, { value: 9, text_key: 'q6_opt4' } ], title_key: 'q6_title', text_key: 'q6_text' },
+            { id: 'q7', weight: 0.8, category: 'home', options: [ { value: 3, text_key: 'q7_opt1' }, { value: 2, text_key: 'q7_opt2' }, { value: 1, text_key: 'q7_opt3' }, { value: 0.5, text_key: 'q7_opt4' } ], title_key: 'q7_title', text_key: 'q7_text' },
+            { id: 'q8', weight: 0.7, category: 'home', options: [ { value: 3, text_key: 'q8_opt1' }, { value: 2, text_key: 'q8_opt2' }, { value: 1, text_key: 'q8_opt3' } ], title_key: 'q8_title', text_key: 'q8_text' },
+            { id: 'q9', weight: 1.4, category: 'home', options: [ { value: 4, text_key: 'q9_opt1' }, { value: 3, text_key: 'q9_opt2' }, { value: 2, text_key: 'q9_opt3' }, { value: 1, text_key: 'q9_opt4' } ], title_key: 'q9_title', text_key: 'q9_text' },
+            { id: 'q10', weight: 0.6, category: 'consumption', options: [ { value: 2, text_key: 'q10_opt1' }, { value: 0, text_key: 'q10_opt2' }, { value: 0, text_key: 'q10_opt3' } ], title_key: 'q10_title', text_key: 'q10_text' },
+            { id: 'q11', weight: 0.5, category: 'home', options: [ { value: 2, text_key: 'q11_opt1' }, { value: 1, text_key: 'q11_opt2' }, { value: 0, text_key: 'q11_opt3' } ], title_key: 'q11_title', text_key: 'q11_text' },
+            { id: 'q12', weight: 0.9, category: 'transport', options: [ { value: 3, text_key: 'q12_opt1' }, { value: 1.5, text_key: 'q12_opt2' }, { value: 0, text_key: 'q12_opt3' } ], title_key: 'q12_title', text_key: 'q12_text' },
+            { id: 'q13', weight: 0.4, category: 'diet', options: [ { value: 2, text_key: 'q13_opt1' }, { value: 1, text_key: 'q13_opt2' }, { value: 0, text_key: 'q13_opt3' } ], title_key: 'q13_title', text_key: 'q13_text' },
+            { id: 'q14', weight: 1.0, category: 'diet', options: [ { value: 2, text_key: 'q14_opt1' }, { value: 1, text_key: 'q14_opt2' }, { value: 0.5, text_key: 'q14_opt3' } ], title_key: 'q14_title', text_key: 'q14_text' },
+            // Added 5 New Questions
+            { id: 'q15', weight: 0.7, category: 'consumption', options: [ { value: 1, text_key: 'q15_opt1' }, { value: 2, text_key: 'q15_opt2' }, { value: 3, text_key: 'q15_opt3' } ], title_key: 'q15_title', text_key: 'q15_text' },
+            { id: 'q16', weight: 0.6, category: 'diet', options: [ { value: 0, text_key: 'q16_opt1' }, { value: 0.5, text_key: 'q16_opt2' }, { value: 1.5, text_key: 'q16_opt3' }, { value: 2.5, text_key: 'q16_opt4' } ], title_key: 'q16_title', text_key: 'q16_text' }, // Pets assigned to 'diet' category
+            { id: 'q17', weight: 0.8, category: 'consumption', options: [ { value: 0.5, text_key: 'q17_opt1' }, { value: 1.5, text_key: 'q17_opt2' }, { value: 3, text_key: 'q17_opt3' } ], title_key: 'q17_title', text_key: 'q17_text' },
+            { id: 'q18', weight: 0.3, category: 'consumption', options: [ { value: 0.5, text_key: 'q18_opt1' }, { value: 1.5, text_key: 'q18_opt2' }, { value: 2.5, text_key: 'q18_opt3' } ], title_key: 'q18_title', text_key: 'q18_text' }, // Finance assigned to 'consumption'
+            { id: 'q19', weight: 1.1, category: 'transport', options: [ { value: 0, text_key: 'q19_opt1' }, { value: 1, text_key: 'q19_opt2' }, { value: 1.5, text_key: 'q19_opt3' }, { value: 3, text_key: 'q19_opt4' }, { value: 0.5, text_key: 'q19_opt5' } ], title_key: 'q19_title', text_key: 'q19_text' }
         ];
 
         let currentQuestionIndex = 0;
         let currentLang = 'es';
         const answers = {};
-        const totalQuestions = questions.length;
+        const totalQuestions = questions.length; // Automatically updates to 19
+        let footprintPieChart = null;
 
         // --- DOM Elements ---
+        // (Same as before)
         const langSelect = document.getElementById('lang-select');
         const questionsContainer = document.getElementById('questions-container');
         const prevBtn = document.getElementById('prev-btn');
@@ -351,185 +317,191 @@
         const restartBtn = document.getElementById('restart-btn');
         const progressBar = document.getElementById('progress-bar');
         const progressText = document.getElementById('progress-text');
+        const pieChartCanvas = document.getElementById('footprintPieChart');
+        const scaleMarker = document.getElementById('scale-marker');
 
+        // --- Helper Functions ---
+        function getTranslation(key, lang = currentLang) {
+            return translations[lang]?.[key] ?? translations['en']?.[key] ?? key;
+        }
 
-        // --- Functions ---
-
-        // Function to update text based on selected language
+        // --- Language and UI Update Functions ---
+        // (updateLanguage function remains the same)
         function updateLanguage(lang) {
             currentLang = lang;
-            document.documentElement.lang = lang; // Update html lang attribute
+            document.documentElement.lang = lang;
             const elements = document.querySelectorAll('[data-translate]');
             elements.forEach(el => {
                 const key = el.getAttribute('data-translate');
-                // Use provided language, fallback to English, then fallback to the key itself
-                const translation = translations[lang]?.[key] ?? translations['en']?.[key] ?? key;
+                const translation = getTranslation(key, lang);
 
-                // Handle specific elements like inputs or use textContent
                 if (el.tagName === 'INPUT' && (el.type === 'submit' || el.type === 'button')) {
                     if(el.type === 'button' || el.type === 'submit') el.textContent = translation;
                 } else if (el.tagName === 'SELECT') {
                     const label = document.querySelector(`label[for="${el.id}"]`);
                     if(label) label.textContent = translation;
                 } else if (el.tagName === 'SPAN' && el.parentElement.id === 'progress-text') {
-                     // Handle the "Question" span in progress text
-                     el.textContent = translation; // Update only the span part
+                     el.textContent = translation;
                 }
                 else {
                     el.textContent = translation;
                 }
             });
 
-            // Update progress text structure separately if needed
-             updateProgressIndicator(); // Ensure the full progress text is updated
-
-            // Re-render the current question to update its text
+            updateProgressIndicator(); // Update progress text including total questions
             renderQuestion(currentQuestionIndex);
-            // Update result text if visible
-             if (!resultSection.classList.contains('hidden')) {
+            if (!resultSection.classList.contains('hidden')) {
                 updateResultText();
+                const finalScore = parseFloat(scoreDisplay.textContent);
+                 if (!isNaN(finalScore)) {
+                     const categoryScores = calculateCategoryScores();
+                     renderPieChart(categoryScores);
+                     renderScale(finalScore);
+                 }
             }
         }
 
-         // Function to update progress bar and text
+
+        // (updateProgressIndicator updates total automatically via totalQuestions variable)
         function updateProgressIndicator() {
             const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
             progressBar.style.width = `${progressPercentage}%`;
-            // Ensure the "Question" part is translatable using the fallback logic
-            const questionWord = translations[currentLang]?.['question'] ?? translations['en']?.['question'] ?? 'Question';
+            const questionWord = getTranslation('question');
+            // Update total questions number dynamically
             progressText.innerHTML = `<span data-translate="question">${questionWord}</span> ${currentQuestionIndex + 1} / ${totalQuestions}`;
         }
 
-
-        // Function to render a specific question
+        // (renderQuestion remains largely the same)
         function renderQuestion(index) {
-            questionsContainer.innerHTML = ''; // Clear previous question
-            if (index < 0 || index >= totalQuestions) return; // Safety check
+            questionsContainer.innerHTML = '';
+            if (index < 0 || index >= totalQuestions) return;
 
             const q = questions[index];
             const questionCard = document.createElement('div');
-            questionCard.className = 'question-card animate-fade-in'; // Add animation class
+            questionCard.className = 'question-card animate-fade-in';
             questionCard.setAttribute('data-question-index', index);
 
             const title = document.createElement('h2');
             title.className = 'text-lg font-semibold mb-2 text-gray-700';
             title.setAttribute('data-translate', q.title_key);
-            title.textContent = translations[currentLang]?.[q.title_key] ?? translations['en']?.[q.title_key] ?? q.title_key; // Fallback logic
+            title.textContent = getTranslation(q.title_key);
 
             const text = document.createElement('p');
             text.className = 'mb-4 text-gray-600';
             text.setAttribute('data-translate', q.text_key);
-            text.textContent = translations[currentLang]?.[q.text_key] ?? translations['en']?.[q.text_key] ?? q.text_key; // Fallback logic
+            text.textContent = getTranslation(q.text_key);
 
             const optionsDiv = document.createElement('div');
-            optionsDiv.className = 'options space-y-2'; // Add spacing between options
+            optionsDiv.className = 'options space-y-2';
 
             q.options.forEach((opt, i) => {
                 const optionId = `${q.id}_opt${i}`;
                 const radioInput = document.createElement('input');
-                radioInput.type = 'radio';
-                radioInput.id = optionId;
-                radioInput.name = q.id;
-                radioInput.value = opt.value;
-                radioInput.className = 'hidden'; // Hide radio button
+                radioInput.type = 'radio'; radioInput.id = optionId; radioInput.name = q.id;
+                radioInput.value = opt.value; radioInput.className = 'hidden';
 
                 const label = document.createElement('label');
-                label.htmlFor = optionId;
-                label.className = 'option-label';
+                label.htmlFor = optionId; label.className = 'option-label';
                 label.setAttribute('data-translate', opt.text_key);
-                label.textContent = translations[currentLang]?.[opt.text_key] ?? translations['en']?.[opt.text_key] ?? opt.text_key; // Fallback logic
+                label.textContent = getTranslation(opt.text_key);
 
-                 // Add event listener to store answer immediately on change
                 radioInput.addEventListener('change', (event) => {
-                    answers[q.id] = parseFloat(event.target.value); // Store answer as number
-
-                    // Re-apply selected style immediately
-                    const allLabels = optionsDiv.querySelectorAll('.option-label');
-                    allLabels.forEach(lbl => {
-                         lbl.classList.remove('bg-blue-100', 'border-blue-500', 'font-medium');
+                    answers[q.id] = parseFloat(event.target.value);
+                    optionsDiv.querySelectorAll('.option-label').forEach(lbl => {
+                         lbl.classList.remove('bg-blue-200', 'border-blue-500', 'font-medium');
                     });
-                    label.classList.add('bg-blue-100', 'border-blue-500', 'font-medium'); // Re-add selected style using Tailwind classes
+                    label.classList.add('bg-blue-200', 'border-blue-500', 'font-medium');
 
-
-                     // Automatically move to next question if not the last one
                     if (currentQuestionIndex < totalQuestions - 1) {
-                       setTimeout(() => showQuestion(currentQuestionIndex + 1), 200); // Small delay
+                       setTimeout(() => showQuestion(currentQuestionIndex + 1), 200);
                     } else {
-                        // Enable submit button if last question is answered
                          submitBtn.disabled = false;
                     }
                 });
 
-                optionsDiv.appendChild(radioInput);
-                optionsDiv.appendChild(label);
+                optionsDiv.appendChild(radioInput); optionsDiv.appendChild(label);
 
-                 // Check if this option was previously selected and apply style
-                if (answers[q.id] !== undefined && answers[q.id] == opt.value) { // Use == for potential type coercion
+                if (answers[q.id] !== undefined && answers[q.id] == opt.value) {
                     radioInput.checked = true;
-                    label.classList.add('bg-blue-100', 'border-blue-500', 'font-medium');
+                    label.classList.add('bg-blue-200', 'border-blue-500', 'font-medium');
                 }
-
             });
 
-            questionCard.appendChild(title);
-            questionCard.appendChild(text);
-            questionCard.appendChild(optionsDiv);
+            questionCard.appendChild(title); questionCard.appendChild(text); questionCard.appendChild(optionsDiv);
             questionsContainer.appendChild(questionCard);
-
-            // Update button visibility and state
             updateNavigationButtons();
-            // Update progress bar
             updateProgressIndicator();
         }
 
-        // Function to show a specific question index
-        function showQuestion(index) {
+        // (showQuestion remains the same)
+         function showQuestion(index) {
             if (index >= 0 && index < totalQuestions) {
                 currentQuestionIndex = index;
                 renderQuestion(currentQuestionIndex);
             }
         }
 
-        // Function to update navigation buttons visibility/state
+        // (updateNavigationButtons remains the same)
         function updateNavigationButtons() {
-            navigationDiv.classList.remove('hidden'); // Show navigation container
+            navigationDiv.classList.remove('hidden');
             prevBtn.classList.toggle('hidden', currentQuestionIndex === 0);
             nextBtn.classList.toggle('hidden', currentQuestionIndex === totalQuestions - 1);
             submitBtn.classList.toggle('hidden', currentQuestionIndex !== totalQuestions - 1);
-             // Disable submit button initially on the last question until an option is selected
             submitBtn.disabled = (currentQuestionIndex === totalQuestions - 1 && answers[questions[currentQuestionIndex].id] === undefined);
         }
 
-        // Function to calculate the footprint
+
+        // --- Calculation Functions ---
+        // (calculateCategoryScores remains the same, iterates through all questions)
+        function calculateCategoryScores() {
+            const categoryScores = { diet: 0, transport: 0, home: 0, consumption: 0, travel: 0 };
+            let totalRawScore = 0;
+            questions.forEach(q => {
+                const answerValue = answers[q.id];
+                if (answerValue !== undefined && q.category) {
+                    const score = answerValue * q.weight;
+                    if (categoryScores.hasOwnProperty(q.category)) {
+                        categoryScores[q.category] += score;
+                    }
+                    totalRawScore += score;
+                }
+            });
+            const filteredScores = {};
+            for (const category in categoryScores) {
+                if (categoryScores[category] > 0) {
+                    filteredScores[category] = categoryScores[category];
+                }
+            }
+            return filteredScores;
+        }
+
+        // (calculateFootprint recalculates maxScore and adjusts range)
         function calculateFootprint() {
             let totalScore = 0;
-            const baseFootprint = 1.5; // Base footprint assumption
+            const baseFootprint = 1.5;
 
             questions.forEach(q => {
                 const answerValue = answers[q.id];
                 if (answerValue !== undefined) {
                     totalScore += answerValue * q.weight;
-                } else {
-                    console.warn(`No answer found for question ${q.id}. Skipping in calculation.`);
                 }
             });
 
-            // Calculate the theoretical maximum score
+            // Recalculate maxScore based on all 19 questions
             let maxScore = 0;
             questions.forEach(q => {
                 let maxOptionValue = 0;
                 q.options.forEach(opt => {
-                    if (opt.value > maxOptionValue) {
-                        maxOptionValue = opt.value;
-                    }
+                    if (opt.value > maxOptionValue) maxOptionValue = opt.value;
                 });
                 maxScore += maxOptionValue * q.weight;
             });
 
             const minFootprint = baseFootprint;
-            const maxFootprint = 25.0; // Adjusted max potential footprint
+            // Slightly increased max footprint due to more questions
+            const maxFootprint = 28.0;
 
-            if (maxScore === 0) return baseFootprint.toFixed(1); // Avoid division by zero
+            if (maxScore === 0) return baseFootprint.toFixed(1);
 
             const cappedScore = Math.min(totalScore, maxScore);
             const calculatedFootprint = minFootprint + (cappedScore / maxScore) * (maxFootprint - minFootprint);
@@ -537,7 +509,8 @@
             return calculatedFootprint.toFixed(1);
         }
 
-         // Function to update result text based on score and language
+        // --- Result Display Functions ---
+        // (updateResultText adjusts score thresholds for messages)
         function updateResultText(score = null) {
             const lang = currentLang;
             if (score === null) {
@@ -548,22 +521,22 @@
             let allTipsKeys = ['tip1', 'tip2', 'tip3', 'tip4', 'tip5', 'tip6', 'tip7', 'tip8', 'tip9', 'tip10'];
             let tipsKeys = [];
 
+            // Adjusted thresholds for 19 questions / max score ~28
             if (score > 0) {
-                if (score <= 8.0) { messageKey = 'result_low'; tipsKeys = ['tip2', 'tip4', 'tip6', 'tip8']; }
-                else if (score <= 16.0) { messageKey = 'result_medium'; tipsKeys = ['tip1', 'tip3', 'tip5', 'tip7', 'tip9']; }
+                if (score <= 9.0) { messageKey = 'result_low'; tipsKeys = ['tip2', 'tip4', 'tip6', 'tip8']; }
+                else if (score <= 18.0) { messageKey = 'result_medium'; tipsKeys = ['tip1', 'tip3', 'tip5', 'tip7', 'tip9']; }
                 else { messageKey = 'result_high'; tipsKeys = ['tip1', 'tip3', 'tip5', 'tip7', 'tip10']; }
                 if (tipsKeys.length < 4 && !tipsKeys.includes('tip4')) { tipsKeys.push('tip4'); }
             } else {
                  tipsKeys = allTipsKeys.slice(0, 5);
             }
 
-            // Use fallback logic for all translatable elements in results
-            resultMessage.textContent = translations[lang]?.[messageKey] ?? translations['en']?.[messageKey] ?? messageKey;
+            resultMessage.textContent = getTranslation(messageKey);
             resultMessage.setAttribute('data-translate', messageKey);
 
             tipsList.innerHTML = '';
             tipsKeys.forEach(tipKey => {
-                 const tipText = translations[lang]?.[tipKey] ?? translations['en']?.[tipKey] ?? tipKey;
+                 const tipText = getTranslation(tipKey);
                  if (tipText) {
                     const li = document.createElement('li');
                     li.setAttribute('data-translate', tipKey);
@@ -572,98 +545,126 @@
                  }
             });
 
-            document.querySelector('#result h2').textContent = translations[lang]?.resultTitle ?? translations['en']?.resultTitle ?? 'Result';
+            // Update other result section text elements
+            document.querySelector('#result h2').textContent = getTranslation('resultTitle');
             document.querySelector('#result h2').setAttribute('data-translate', 'resultTitle');
-            document.querySelector('#result .text-3xl span[data-translate="resultUnit"]').textContent = translations[lang]?.resultUnit ?? translations['en']?.resultUnit ?? 'units';
+            document.querySelector('#result .text-3xl span[data-translate="resultUnit"]').textContent = getTranslation('resultUnit');
             document.querySelector('#result .text-3xl span[data-translate="resultUnit"]').setAttribute('data-translate', 'resultUnit');
-            document.querySelector('#result h3').textContent = translations[lang]?.tipsTitle ?? translations['en']?.tipsTitle ?? 'Tips';
-            document.querySelector('#result h3').setAttribute('data-translate', 'tipsTitle');
-            restartBtn.textContent = translations[lang]?.restartButton ?? translations['en']?.restartButton ?? 'Restart';
+            document.querySelector('#result h3[data-translate="tipsTitle"]').textContent = getTranslation('tipsTitle');
+            document.querySelector('#result h3[data-translate="tipsTitle"]').setAttribute('data-translate', 'tipsTitle');
+            restartBtn.textContent = getTranslation('restartButton');
             restartBtn.setAttribute('data-translate', 'restartButton');
+
+             // Update visualization titles and labels
+             document.querySelector('h3[data-translate="pieChartTitle"]').textContent = getTranslation('pieChartTitle');
+             document.querySelector('h3[data-translate="scaleTitle"]').textContent = getTranslation('scaleTitle');
+             document.querySelector('.scale-labels span[data-translate="scaleLow"]').textContent = getTranslation('scaleLow');
+             document.querySelector('.scale-labels span[data-translate="scaleAvg"]').textContent = getTranslation('scaleAvg');
+             document.querySelector('.scale-labels span[data-translate="scaleHigh"]').textContent = getTranslation('scaleHigh');
+             document.querySelector('#scale-explanation').textContent = getTranslation('scaleAvgInfo');
         }
 
 
+        // (renderPieChart remains the same)
+         function renderPieChart(categoryScores) {
+             const ctx = pieChartCanvas.getContext('2d');
+             if (footprintPieChart) { footprintPieChart.destroy(); }
+             const labels = Object.keys(categoryScores).map(catKey => getTranslation(`category_${catKey}`));
+             const data = Object.values(categoryScores);
+             const backgroundColors = ['#34D399', '#FBBF24', '#60A5FA', '#A78BFA', '#F472B6', '#A3A3A3'];
+             const hoverBackgroundColors = ['#10B981', '#F59E0B', '#3B82F6', '#8B5CF6', '#EC4899', '#737373'];
+
+             footprintPieChart = new Chart(ctx, {
+                 type: 'pie',
+                 data: {
+                     labels: labels,
+                     datasets: [{
+                         label: getTranslation('pieChartTitle'), data: data,
+                         backgroundColor: backgroundColors.slice(0, data.length),
+                         hoverBackgroundColor: hoverBackgroundColors.slice(0, data.length),
+                         borderColor: '#ffffff', borderWidth: 2, hoverOffset: 8
+                     }]
+                 },
+                 options: {
+                     responsive: true, maintainAspectRatio: false,
+                     plugins: {
+                         legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } },
+                         tooltip: {
+                             callbacks: {
+                                 label: function(context) {
+                                     let label = context.label || ''; if (label) { label += ': '; }
+                                     if (context.parsed !== null) {
+                                         const total = context.dataset.data.reduce((acc, value) => acc + value, 0);
+                                         const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0; // Avoid NaN
+                                         label += `${percentage}%`;
+                                     } return label;
+                                 }
+                             }
+                         }
+                     }
+                 }
+             });
+        }
+
+        // (renderScale updates range)
+         function renderScale(score) {
+             const minFootprint = 1.5;
+             const maxFootprint = 28.0; // Updated max range
+             const clampedScore = Math.max(minFootprint, Math.min(score, maxFootprint));
+             const percentage = ((clampedScore - minFootprint) / (maxFootprint - minFootprint)) * 100;
+             scaleMarker.style.left = `${percentage}%`;
+         }
+
         // --- Event Listeners ---
-        langSelect.addEventListener('change', (e) => {
-            updateLanguage(e.target.value);
-        });
-
-        prevBtn.addEventListener('click', () => {
-            showQuestion(currentQuestionIndex - 1);
-        });
-
+        // (Event listeners remain the same)
+        langSelect.addEventListener('change', (e) => { updateLanguage(e.target.value); });
+        prevBtn.addEventListener('click', () => { showQuestion(currentQuestionIndex - 1); });
         nextBtn.addEventListener('click', () => {
              const currentQId = questions[currentQuestionIndex].id;
              if (answers[currentQId] === undefined) {
                  const card = questionsContainer.querySelector('.question-card');
-                 if (card) {
-                     card.style.animation = 'shake 0.5s ease-in-out';
-                     setTimeout(() => card.style.animation = '', 500);
-                 }
-                 console.warn("Please select an option before proceeding.");
-                 return;
-             }
-            showQuestion(currentQuestionIndex + 1);
+                 if (card) { card.style.animation = 'shake 0.5s ease-in-out'; setTimeout(() => card.style.animation = '', 500); }
+                 console.warn("Please select an option before proceeding."); return;
+             } showQuestion(currentQuestionIndex + 1);
         });
-
         form.addEventListener('submit', (e) => {
             e.preventDefault();
              const lastQId = questions[totalQuestions - 1].id;
              if (answers[lastQId] === undefined) {
                  console.error("Cannot submit, last question not answered.");
                  const card = questionsContainer.querySelector('.question-card');
-                 if (card) {
-                     card.style.animation = 'shake 0.5s ease-in-out';
-                     setTimeout(() => card.style.animation = '', 500);
-                 }
+                 if (card) { card.style.animation = 'shake 0.5s ease-in-out'; setTimeout(() => card.style.animation = '', 500); }
                  return;
              }
-
             const finalScore = calculateFootprint();
+            const categoryScores = calculateCategoryScores();
             scoreDisplay.textContent = finalScore;
             updateResultText(parseFloat(finalScore));
-
-            form.classList.add('hidden');
-            navigationDiv.classList.add('hidden');
+            renderPieChart(categoryScores);
+            renderScale(parseFloat(finalScore));
+            form.classList.add('hidden'); navigationDiv.classList.add('hidden');
             document.querySelector('.progress-bar-container').classList.add('hidden');
-            progressText.classList.add('hidden');
-            resultSection.classList.remove('hidden');
+            progressText.classList.add('hidden'); resultSection.classList.remove('hidden');
         });
-
         restartBtn.addEventListener('click', () => {
-            currentQuestionIndex = 0;
-            Object.keys(answers).forEach(key => delete answers[key]);
-
-            resultSection.classList.add('hidden');
-            form.classList.remove('hidden');
+            currentQuestionIndex = 0; Object.keys(answers).forEach(key => delete answers[key]);
+             if (footprintPieChart) { footprintPieChart.destroy(); footprintPieChart = null; }
+            resultSection.classList.add('hidden'); form.classList.remove('hidden');
             navigationDiv.classList.remove('hidden');
             document.querySelector('.progress-bar-container').classList.remove('hidden');
             progressText.classList.remove('hidden');
-
-            scoreDisplay.textContent = '0';
-            updateResultText(); // Reset result text to default based on current language
-            showQuestion(0);
+            scoreDisplay.textContent = '0'; updateResultText(); showQuestion(0);
         });
 
-
         // --- Initial Setup ---
-        updateLanguage(langSelect.value); // Set initial language based on dropdown default
+        updateLanguage(langSelect.value);
 
     </script>
 
     <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
     </style>
 
 </body>
